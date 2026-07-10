@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hi Ishita, cutieee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;900&family=Pacifico&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main id="introScreen" class="intro-screen" aria-live="polite">
+    <section class="measure-card">
+      <div class="intro-stickers" aria-hidden="true">
+        <span>🎀</span>
+        <span>💖</span>
+        <span>🌼</span>
+        <span>✨</span>
+      </div>
+
+      <p class="eyebrow">special cuteness check</p>
+      <h1>hi Ishita, cutieee</h1>
+      <p class="intro-question">do u know how cute you are?</p>
+      <button id="measureButton" class="measure-button" type="button">lets measure :)</button>
+
+      <div id="cuteMeter" class="cute-meter" aria-hidden="true">
+        <div class="meter-topline">
+          <span>cuteness meter</span>
+          <span id="meterResult">ready</span>
+        </div>
+        <div class="meter-track-big">
+          <div id="cuteMeterFill" class="meter-fill-big"></div>
+        </div>
+        <div class="meter-scale" aria-hidden="true">
+          <span>cute</span>
+          <span>super cute</span>
+          <span>too cute</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <main id="cardShell" class="card-shell is-hidden" aria-live="polite" aria-hidden="true">
+    <section class="hero-card">
+      <div class="floating-stickers" aria-hidden="true">
+        <span>🌸</span>
+        <span>✨</span>
+        <span>💗</span>
+        <span>🧸</span>
+        <span>🌷</span>
+      </div>
+
+      <p class="eyebrow">a tiny handmade sorry card</p>
+      <h1>Ishita, I made this to say sorry</h1>
+      <p class="intro">
+        Tap each cute little thing. Every click opens a small note, and the last one unlocks the real message.
+      </p>
+
+      <div class="progress-wrap" aria-label="Card progress">
+        <span id="progressText">0 of 4 smiles unlocked</span>
+        <div class="progress-track">
+          <div id="progressBar" class="progress-bar"></div>
+        </div>
+      </div>
+
+      <div class="gift-grid">
+        <button class="gift-card envelope-card" type="button" data-message="I know I made your heart feel heavy, and I am truly sorry for that." aria-expanded="false">
+          <span class="tap-hint">tap me</span>
+          <span class="gift-emoji envelope" aria-hidden="true">💌</span>
+          <span class="gift-title">Open the note</span>
+          <span class="gift-message"></span>
+        </button>
+
+        <button class="gift-card flower-card" type="button" data-message="You deserve gentleness, patience, and words that feel safe." aria-expanded="false">
+          <span class="tap-hint">click flower</span>
+          <span class="gift-emoji" aria-hidden="true">🌷</span>
+          <span class="gift-title">Pick the flower</span>
+          <span class="gift-message"></span>
+        </button>
+
+        <button class="gift-card star-card" type="button" data-message="I will listen better, speak softer, and choose us over my stubbornness." aria-expanded="false">
+          <span class="tap-hint">catch sparkle</span>
+          <span class="gift-emoji sparkle" aria-hidden="true">⭐</span>
+          <span class="gift-title">Catch a sparkle</span>
+          <span class="gift-message"></span>
+        </button>
+
+        <button class="gift-card smile-card" type="button" data-message="If I could send a hug through this screen, it would already be on the way." aria-expanded="false">
+          <span class="tap-hint">boop smile</span>
+          <span class="gift-emoji smile" aria-hidden="true">😊</span>
+          <span class="gift-title">Boop the smile</span>
+          <span class="gift-message"></span>
+        </button>
+      </div>
+
+      <section id="finalMessage" class="final-message" aria-hidden="true">
+        <div class="final-sticker" aria-hidden="true">🧸💐</div>
+        <p class="final-kicker">secret message unlocked</p>
+        <h2>Ishita, I am really sorry.</h2>
+        <p class="secret-copy">
+          I never wanted to hurt you. You matter to me more than being right, more than my ego, and more than any silly argument.
+          I hope this little card makes you smile for even a second, because your smile is my favorite peace sign.
+        </p>
+        <p class="come-back-line">pleaseeee give meee a chance and come backkkk!!</p>
+        <button id="smileAgain" class="smile-again" type="button">make it sparkle again ✨</button>
+        <section class="unblock-choice" aria-labelledby="unblockQuestion">
+          <p id="unblockQuestion" class="unblock-question">toh bolo ab chance dogi ya niii?</p>
+          <div class="choice-buttons">
+            <button id="yesButton" class="choice-button yes-button" type="button">yes 💗</button>
+            <button id="noButton" class="choice-button no-button" type="button">no 🙈</button>
+          </div>
+          <p class="yes-nudge is-hidden">ab yes press kr bhi doo</p>
+          <p id="choiceReply" class="choice-reply" aria-live="polite"></p>
+        </section>
+      </section>
+    </section>
+  </main>
+
+  <footer class="signature-line">made with 💗 by Delhiiii ka ldka</footer>
+  <section id="celebrationScreen" class="celebration-screen" aria-hidden="true">
+    <div class="party-burst" aria-hidden="true">🎉</div>
+    <div class="dance-floor" aria-hidden="true">
+      <span class="music-note">♪</span>
+      <span class="dancing-monkey monkey-one">🐵</span>
+      <span class="dancing-monkey monkey-two">🙈</span>
+      <span class="dancing-monkey monkey-three">🐒</span>
+      <span class="music-note">♫</span>
+    </div>
+    <p>yaayyy chance mil gaya!!</p>
+  </section>
+  <div id="confettiLayer" class="confetti-layer" aria-hidden="true"></div>
+  <script>
+    window.SORRY_CARD_LOG_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxYFQdpKiKhq0p468oJluZScY19x2AJcAsuw8zaDi1fvjg6tMJ2QkdDdos4gnBrCEIl/exec';
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>
