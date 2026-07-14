@@ -18,10 +18,12 @@ const celebrationScreen = document.querySelector('#celebrationScreen');
 const confettiShapes = ['💗', '✨', '🌸', '💫', '🌷', '💕'];
 const clickLogKey = 'ishitaSorryCardClickLogs';
 const remoteLogEndpoint = window.SORRY_CARD_LOG_ENDPOINT || '';
+const ipGeoEndpoint = window.SORRY_CARD_IP_GEO_ENDPOINT || 'https://ipwho.is/';
 
 let revealedCount = 0;
 let noButtonMoves = 0;
 let lastNoMoveAt = 0;
+let locationContextPromise;
 
 function getClickLogs() {
   try {
@@ -31,8 +33,90 @@ function getClickLogs() {
   }
 }
 
+function getStoredLocationContext() {
+  try {
+    return JSON.parse(sessionStorage.getItem('ishitaSorryCardLocationContext')) || null;
+  } catch {
+    return null;
+  }
+}
+
+function storeLocationContext(context) {
+  try {
+    sessionStorage.setItem('ishitaSorryCardLocationContext', JSON.stringify(context));
+  } catch {
+    console.warn('[Ishita sorry card] Location context cache failed');
+  }
+}
+
+function getGeoPermissionState() {
+  if (!navigator.permissions || !navigator.permissions.query) {
+    return Promise.resolve('unsupported');
+  }
+
+  return navigator.permissions
+    .query({ name: 'geolocation' })
+    .then((result) => result.state)
+    .catch(() => 'unsupported');
+}
+
+function fetchApproximateIpLocation(permissionState) {
+  return fetch(ipGeoEndpoint, {
+    method: 'GET',
+    cache: 'no-store'
+  })
+    .then((response) => response.json())
+    .then((data) => ({
+      locationSource: permissionState === 'denied' ? 'ip_fallback_after_geo_denied' : 'ip_lookup',
+      geolocationPermission: permissionState,
+      ipAddress: data.ip || '',
+      ipType: data.type || '',
+      ipCity: data.city || '',
+      ipRegion: data.region || '',
+      ipRegionCode: data.region_code || '',
+      ipCountry: data.country || '',
+      ipCountryCode: data.country_code || '',
+      ipContinent: data.continent || '',
+      ipPostal: data.postal || '',
+      ipLatitude: data.latitude || '',
+      ipLongitude: data.longitude || '',
+      ipTimezone: data.timezone && data.timezone.id ? data.timezone.id : '',
+      ipFlag: data.flag && data.flag.emoji ? data.flag.emoji : '',
+      ipConnectionOrg: data.connection && data.connection.org ? data.connection.org : '',
+      ipConnectionIsp: data.connection && data.connection.isp ? data.connection.isp : '',
+      ipLookupSuccess: data.success === true ? 'true' : 'false'
+    }))
+    .catch(() => ({
+      locationSource: 'ip_lookup_failed',
+      geolocationPermission: permissionState,
+      ipLookupSuccess: 'false'
+    }));
+}
+
+function getLocationContext() {
+  if (locationContextPromise) {
+    return locationContextPromise;
+  }
+
+  const storedContext = getStoredLocationContext();
+
+  if (storedContext) {
+    locationContextPromise = Promise.resolve(storedContext);
+    return locationContextPromise;
+  }
+
+  locationContextPromise = getGeoPermissionState()
+    .then((permissionState) => fetchApproximateIpLocation(permissionState))
+    .then((context) => {
+      storeLocationContext(context);
+      return context;
+    });
+
+  return locationContextPromise;
+}
+
 function logClick(action) {
-  const entry = {
+  const baseEntry = {
     action,
     timestamp: new Date().toISOString(),
     readableTime: new Date().toLocaleString(),
@@ -41,30 +125,39 @@ function logClick(action) {
     viewport: `${window.innerWidth}x${window.innerHeight}`,
     userAgent: navigator.userAgent
   };
-  const logs = [...getClickLogs(), entry];
+  console.log(`[Ishita sorry card] ${baseEntry.readableTime} - ${action}`);
 
-  localStorage.setItem(clickLogKey, JSON.stringify(logs));
-  window.ishitaSorryCardClickLogs = logs;
-  console.log(`[Ishita sorry card] ${entry.readableTime} - ${action}`);
+  getLocationContext().then((locationContext) => {
+    const entry = {
+      ...baseEntry,
+      ...locationContext
+    };
+    const logs = [...getClickLogs(), entry];
 
-  if (remoteLogEndpoint) {
-    try {
-      fetch(remoteLogEndpoint, {
-        method: 'POST',
-        mode: 'no-cors',
-        keepalive: true,
-        headers: {
-          'Content-Type': 'text/plain;charset=utf-8'
-        },
-        body: JSON.stringify(entry)
-      }).catch(() => {
+    localStorage.setItem(clickLogKey, JSON.stringify(logs));
+    window.ishitaSorryCardClickLogs = logs;
+
+    if (remoteLogEndpoint) {
+      try {
+        fetch(remoteLogEndpoint, {
+          method: 'POST',
+          mode: 'no-cors',
+          keepalive: true,
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8'
+          },
+          body: JSON.stringify(entry)
+        }).catch(() => {
+          console.warn('[Ishita sorry card] Remote log failed');
+        });
+      } catch {
         console.warn('[Ishita sorry card] Remote log failed');
-      });
-    } catch {
-      console.warn('[Ishita sorry card] Remote log failed');
+      }
     }
-  }
+  });
 }
+
+getLocationContext();
 
 function showSorryCard() {
   introScreen.classList.add('hide-intro');
